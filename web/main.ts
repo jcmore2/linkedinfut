@@ -6,6 +6,8 @@ import { renderCardStyled } from "../src/renderCardStyled.js";
 import { renderCardBack } from "./cardBack.js";
 import type { CardData, CardStyle } from "../src/types.js";
 
+const setupPanel = document.getElementById("setup-panel") as HTMLElement;
+
 const tabFull = document.getElementById("tab-full") as HTMLButtonElement;
 const tabScout = document.getElementById("tab-scout") as HTMLButtonElement;
 const panelFull = document.getElementById("panel-full") as HTMLElement;
@@ -14,10 +16,12 @@ const panelScout = document.getElementById("panel-scout") as HTMLElement;
 const zipDropZone = document.getElementById("zip-drop-zone") as HTMLLabelElement;
 const zipDropLabel = document.getElementById("zip-drop-label") as HTMLSpanElement;
 const zipInput = document.getElementById("zip-input") as HTMLInputElement;
+const ZIP_DROP_DEFAULT = zipDropLabel.textContent ?? "";
 
 const pdfDropZone = document.getElementById("pdf-drop-zone") as HTMLLabelElement;
 const pdfDropLabel = document.getElementById("pdf-drop-label") as HTMLSpanElement;
 const pdfInput = document.getElementById("pdf-input") as HTMLInputElement;
+const PDF_DROP_DEFAULT = pdfDropLabel.textContent ?? "";
 
 const styleFutBtn = document.getElementById("style-fut") as HTMLButtonElement;
 const styleTcgBtn = document.getElementById("style-tcg") as HTMLButtonElement;
@@ -30,6 +34,7 @@ const cardFlipInner = document.getElementById("card-flip-inner") as HTMLDivEleme
 const cardFront = document.getElementById("card-front") as HTMLDivElement;
 const cardBack = document.getElementById("card-back") as HTMLDivElement;
 const downloadBtn = document.getElementById("download-btn") as HTMLButtonElement;
+const newCardBtn = document.getElementById("new-card-btn") as HTMLButtonElement;
 
 let currentSvg = "";
 let currentCardData: CardData | null = null;
@@ -75,6 +80,17 @@ function setStyle(style: CardStyle) {
 styleFutBtn.addEventListener("click", () => setStyle("fut"));
 styleTcgBtn.addEventListener("click", () => setStyle("tcg"));
 
+function triggerRevealAnimation() {
+  // Remove-then-reflow-then-add so the animation restarts even if the
+  // classes were already present from a previous reveal.
+  cardFlipInner.classList.remove("reveal");
+  cardFront.classList.remove("shine");
+  void cardFlipInner.offsetWidth;
+  cardFlipInner.classList.add("reveal");
+  cardFront.classList.add("shine");
+  window.setTimeout(() => cardFront.classList.remove("shine"), 1200);
+}
+
 function renderAndShow(cardData: CardData) {
   currentCardData = cardData;
   renderFront();
@@ -82,9 +98,24 @@ function renderAndShow(cardData: CardData) {
   cardFront.hidden = false;
   cardBack.hidden = true;
   cardFlipInner.classList.remove("squeezed");
+  setupPanel.hidden = true;
   resultEl.hidden = false;
+  triggerRevealAnimation();
   setStatus(`Scouted ${cardData.name || "your profile"} — overall ${cardData.overall}, ${cardData.tier} (${cardData.mode}).`);
 }
+
+function resetToSetup() {
+  resultEl.hidden = true;
+  setupPanel.hidden = false;
+  currentCardData = null;
+  zipInput.value = "";
+  pdfInput.value = "";
+  zipDropLabel.textContent = ZIP_DROP_DEFAULT;
+  pdfDropLabel.textContent = PDF_DROP_DEFAULT;
+  setStatus("");
+}
+
+newCardBtn.addEventListener("click", resetToSetup);
 
 function toggleFlip() {
   cardFlipInner.classList.add("squeezed");
