@@ -97,6 +97,11 @@ section {
   color: var(--text);
 }
 
+.style-tabs {
+  margin-bottom: 14px;
+  max-width: 320px;
+}
+
 #panel-full[hidden],
 #panel-scout[hidden] {
   display: none;

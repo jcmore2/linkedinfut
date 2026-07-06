@@ -4,8 +4,8 @@ import { parseExport } from "./parseExport.js";
 import { computeStats, computeOverall, computeTier, computeArchetype } from "./scoring.js";
 import { computeStatsFromPdfProfile } from "./pdf/scoringPdf.js";
 import { parseProfilePdf } from "./pdf/readPdfNode.js";
-import { renderCard } from "./renderCard.js";
-import type { CardData } from "./types.js";
+import { renderCardStyled } from "./renderCardStyled.js";
+import type { CardData, CardStyle } from "./types.js";
 
 function parseArgs(argv: string[]): Record<string, string> {
   const out: Record<string, string> = {};
@@ -62,12 +62,13 @@ async function main() {
     };
   } else {
     console.error(
-      "Usage: npm run generate -- --export <export.zip> | --pdf <profile.pdf> [--country US] [--out output/card.svg]",
+      "Usage: npm run generate -- --export <export.zip> | --pdf <profile.pdf> [--country US] [--style fut|tcg] [--out output/card.svg]",
     );
     process.exit(1);
   }
 
-  const svg = renderCard(cardData);
+  const style: CardStyle = args.style === "tcg" ? "tcg" : "fut";
+  const svg = renderCardStyled(cardData, style);
 
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, svg, "utf-8");

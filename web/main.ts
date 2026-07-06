@@ -2,9 +2,9 @@ import { parseExportFile } from "./lib/parseExportBrowser.js";
 import { parseProfilePdfFile } from "./lib/parsePdfBrowser.js";
 import { computeStats, computeOverall, computeTier, computeArchetype } from "../src/scoring.js";
 import { computeStatsFromPdfProfile } from "../src/pdf/scoringPdf.js";
-import { renderCard } from "../src/renderCard.js";
+import { renderCardStyled } from "../src/renderCardStyled.js";
 import { renderCardBack } from "./cardBack.js";
-import type { CardData } from "../src/types.js";
+import type { CardData, CardStyle } from "../src/types.js";
 
 const tabFull = document.getElementById("tab-full") as HTMLButtonElement;
 const tabScout = document.getElementById("tab-scout") as HTMLButtonElement;
@@ -19,6 +19,9 @@ const pdfDropZone = document.getElementById("pdf-drop-zone") as HTMLLabelElement
 const pdfDropLabel = document.getElementById("pdf-drop-label") as HTMLSpanElement;
 const pdfInput = document.getElementById("pdf-input") as HTMLInputElement;
 
+const styleFutBtn = document.getElementById("style-fut") as HTMLButtonElement;
+const styleTcgBtn = document.getElementById("style-tcg") as HTMLButtonElement;
+
 const countryInput = document.getElementById("country-input") as HTMLInputElement;
 const statusEl = document.getElementById("status") as HTMLParagraphElement;
 const resultEl = document.getElementById("result") as HTMLElement;
@@ -29,6 +32,8 @@ const cardBack = document.getElementById("card-back") as HTMLDivElement;
 const downloadBtn = document.getElementById("download-btn") as HTMLButtonElement;
 
 let currentSvg = "";
+let currentCardData: CardData | null = null;
+let currentStyle: CardStyle = "fut";
 
 function setStatus(message: string, isError = false) {
   statusEl.textContent = message;
@@ -52,9 +57,27 @@ tabScout.addEventListener("click", () => switchTab("scout"));
 
 const SQUEEZE_MS = 160;
 
-function renderAndShow(cardData: CardData) {
-  currentSvg = renderCard(cardData);
+function renderFront() {
+  if (!currentCardData) return;
+  currentSvg = renderCardStyled(currentCardData, currentStyle);
   cardFront.innerHTML = currentSvg;
+}
+
+function setStyle(style: CardStyle) {
+  currentStyle = style;
+  styleFutBtn.classList.toggle("active", style === "fut");
+  styleTcgBtn.classList.toggle("active", style === "tcg");
+  styleFutBtn.setAttribute("aria-selected", String(style === "fut"));
+  styleTcgBtn.setAttribute("aria-selected", String(style === "tcg"));
+  renderFront();
+}
+
+styleFutBtn.addEventListener("click", () => setStyle("fut"));
+styleTcgBtn.addEventListener("click", () => setStyle("tcg"));
+
+function renderAndShow(cardData: CardData) {
+  currentCardData = cardData;
+  renderFront();
   cardBack.innerHTML = renderCardBack(cardData);
   cardFront.hidden = false;
   cardBack.hidden = true;

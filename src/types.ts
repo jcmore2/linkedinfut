@@ -39,6 +39,7 @@ export interface Stats {
 
 export type Tier = "BRONZE" | "SILVER" | "GOLD" | "IN-FORM" | "TOTY" | "ICON";
 export type SourceMode = "FULL" | "SCOUT";
+export type CardStyle = "fut" | "tcg";
 
 export interface CardData {
   name: string;

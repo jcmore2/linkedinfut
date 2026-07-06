@@ -61,6 +61,14 @@ tier bands mean. This is a web-app-only feature — the embeddable `card.svg`
 file (front side only) is a static image, so it can't be interactive inside
 a GitHub README `<img>`.
 
+There's also a **card style switcher**: the same scored data can render as
+the FIFA/FUT-style card described above, or as a trading-card-game-style
+layout ([src/renderCardTcg.ts](src/renderCardTcg.ts)) where each stat reads
+as an "attack" with its own effect text. Switching styles re-renders
+instantly from the already-computed data — no re-upload needed. This is an
+original layout inspired by the TCG format, not any officially licensed
+card set, and says so on the card itself.
+
 ## CLI (generates a card you commit to this repo)
 
 **Full export:**
@@ -85,6 +93,9 @@ a GitHub README `<img>`.
    npm install
    npm run generate -- --pdf ~/Downloads/Profile.pdf --country US --out card.svg
    ```
+
+Add `--style tcg` to either command for the trading-card-style layout instead
+of the default FIFA/FUT one.
 
 Either way:
 
