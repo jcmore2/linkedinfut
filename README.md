@@ -28,7 +28,7 @@ https://raw.githubusercontent.com/<you>/<repo>/main/<path-to-card>.svg
 ## Two ways to scout a profile
 
 There are two independent input modes — same card format, different data
-source, different tradeoffs. Both are available in the CLI and the web app.
+source, different tradeoffs.
 
 | | **Full export** (`.zip`) | **Scout** (`.pdf`) |
 |---|---|---|
@@ -36,12 +36,16 @@ source, different tradeoffs. Both are available in the CLI and the web app.
 | Whose profile? | **Only your own** (it's your account's data) | **Anyone's public profile** you can view |
 | Signals | Connections, endorsements, recommendations, posting activity, full skill list, tenure | Career history/tenure, top 3 skills, certifications, languages, education — no social-proof metrics |
 | Card badge | `FULL EXPORT` | `PDF SCOUT` |
+| Available in | CLI only | CLI and the web app |
 
-The PDF mode is the one that's actually comparable to GitFut's "look up
+The PDF/Scout mode is the one that's actually comparable to GitFut's "look up
 anyone" experience — LinkedIn has no public API for that, but "Save to PDF"
 is a real, always-available profile-page feature, not scraping. It just has
 much thinner signals, so it uses a **separate scoring formula** ([src/pdf/scoringPdf.ts](src/pdf/scoringPdf.ts))
-rather than forcing PDF data into the full-export formula.
+rather than forcing PDF data into the full-export formula. It's also the
+only mode the web app offers — the full-export flow needs your own account
+data, which doesn't add much for a public drop-a-file-and-go tool, so it's
+CLI-only to keep the web experience to one clear path.
 
 **Use this respectfully** — being able to view someone's public profile
 doesn't mean turning it into a stat card is something they'd expect or want.
@@ -51,7 +55,7 @@ card of theirs.
 ## Web app (no install required)
 
 **[jcmore2.github.io/scoutcard](https://jcmore2.github.io/scoutcard/)**
-— pick a mode, drop a file, get your card instantly. It's a static page
+— drop a "Save to PDF" export, get your card instantly. It's a static page
 (built by GitHub Actions, hosted on GitHub Pages) that parses everything
 client-side with JavaScript — nothing is ever uploaded anywhere, not even to
 this project. Close the tab and the data is gone. Once a card is generated,
@@ -74,11 +78,16 @@ set, and say so on the card itself.
 
 ## Flag and company, but no photo or logo
 
-The card shows a real country flag (if you enter a country code) and your
-current employer's name, extracted from whichever source you used. Flags are
-bundled locally ([web/public/flags](web/public/flags), from the
-[flag-icons](https://github.com/lipis/flag-icons) project) and fetched from
-this site itself — never a third-party request.
+The card shows a real country flag and the current employer's name, both
+extracted straight from the profile — no manual input. The flag comes from
+guessing a country out of the profile's free-text location line
+([src/country.ts](src/country.ts)): a known country name, a capital city
+("Madrid y alrededores" → Spain, since Madrid is its capital), a handful of
+major non-capital hubs ("San Francisco Bay Area" → US), or a trailing US
+state abbreviation, in that order — falling back to no flag rather than
+guessing wrong. Flags themselves are bundled locally ([web/public/flags](web/public/flags),
+from the [flag-icons](https://github.com/lipis/flag-icons) project) and
+fetched from this site itself — never a third-party request.
 
 There's deliberately no profile photo or company logo. Neither the data
 export nor the "Save to PDF" export contains an image (verified directly —
@@ -100,7 +109,7 @@ The initials avatar placeholder stays as-is.
 
    ```bash
    npm install
-   npm run generate -- --export ~/Downloads/Complete_LinkedInDataExport.zip --country US --out card.svg
+   npm run generate -- --export ~/Downloads/Complete_LinkedInDataExport.zip --out card.svg
    ```
 
 **Scout mode:**
@@ -110,11 +119,12 @@ The initials avatar placeholder stays as-is.
 
    ```bash
    npm install
-   npm run generate -- --pdf ~/Downloads/Profile.pdf --country US --out card.svg
+   npm run generate -- --pdf ~/Downloads/Profile.pdf --out card.svg
    ```
 
-Add `--style tcg` to either command for the trading-card-style layout instead
-of the default FIFA/FUT shield.
+Country/flag is auto-detected from the profile's location — add `--country US`
+to either command to override the guess. Add `--style tcg` for the
+trading-card-style layout instead of the default FIFA/FUT shield.
 
 Either way:
 

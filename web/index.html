@@ -26,34 +26,7 @@
       <section id="setup-panel">
         <p class="privacy-inline">✓ Nothing is uploaded — parsed on your device, gone when you close the tab.</p>
 
-        <div class="tabs" role="tablist">
-          <button class="tab active" id="tab-full" role="tab" aria-selected="true">Full export (.zip)</button>
-          <button class="tab" id="tab-scout" role="tab" aria-selected="false">Scout a profile (PDF)</button>
-        </div>
-
-        <section id="panel-full">
-          <section class="steps">
-            <ol>
-              <li>
-                On LinkedIn: <strong>Settings &amp; Privacy → Data Privacy →
-                Get a copy of your data</strong>. Request at least Profile,
-                Positions, Skills, Connections, Recommendations, Endorsements,
-                Shares, Comments.
-              </li>
-              <li>Download the <code>.zip</code> LinkedIn emails you.</li>
-              <li>Drop it below. Richer stats (connections, endorsements, activity) — only works for your own account.</li>
-            </ol>
-          </section>
-
-          <section class="uploader">
-            <label for="zip-input" id="zip-drop-zone" class="drop-zone">
-              <span id="zip-drop-label">Drop your LinkedIn export .zip here, or click to choose a file</span>
-              <input id="zip-input" type="file" accept=".zip" />
-            </label>
-          </section>
-        </section>
-
-        <section id="panel-scout" hidden>
+        <section id="panel-scout">
           <section class="steps">
             <ol>
               <li>
@@ -61,7 +34,7 @@
                 (yours or someone else's) → click <strong>"More" → "Save to
                 PDF"</strong>.
               </li>
-              <li>Drop the downloaded <code>.pdf</code> below. Thinner stats (no connections/endorsements/activity — only career history, skills, certs, languages, education) but works on anyone's public profile.</li>
+              <li>Drop the downloaded <code>.pdf</code> below.</li>
             </ol>
           </section>
 
@@ -72,11 +45,6 @@
             </label>
           </section>
         </section>
-
-        <div class="controls">
-          <label for="country-input">Country code (optional, e.g. US)</label>
-          <input id="country-input" type="text" maxlength="2" placeholder="US" />
-        </div>
       </section>
 
       <p id="status" role="status"></p>

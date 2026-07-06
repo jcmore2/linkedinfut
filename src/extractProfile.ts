@@ -73,6 +73,7 @@ export function extractProfile(getFile: FileLookup): ParsedProfile {
   const firstName = findColumn(profile, ["First Name"]);
   const lastName = findColumn(profile, ["Last Name"]);
   const headline = findColumn(profile, ["Headline"]);
+  const location = findColumn(profile, ["Geo Location"]);
 
   const startDates = positionRows
     .map((r) => parseMonthYear(findColumn(r, ["Started On"])))
@@ -100,6 +101,7 @@ export function extractProfile(getFile: FileLookup): ParsedProfile {
     lastName,
     headline,
     company,
+    location,
     positionYears: Math.max(0, positionYears),
     skillCount,
     connectionCount: connectionRows.length,
