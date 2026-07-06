@@ -24,20 +24,45 @@ https://raw.githubusercontent.com/<you>/<repo>/main/<path-to-card>.svg
 "Self-updating" here means "re-run the generator and push" rather than
 "recomputed live per visitor." No Vercel, no Redis, no cost.
 
+## Two ways to scout a profile
+
+There are two independent input modes — same card format, different data
+source, different tradeoffs. Both are available in the CLI and the web app.
+
+| | **Full export** (`.zip`) | **Scout** (`.pdf`) |
+|---|---|---|
+| Source | LinkedIn's official data export | "Save to PDF" button on a profile page |
+| Whose profile? | **Only your own** (it's your account's data) | **Anyone's public profile** you can view |
+| Signals | Connections, endorsements, recommendations, posting activity, full skill list, tenure | Career history/tenure, top 3 skills, certifications, languages, education — no social-proof metrics |
+| Card badge | `FULL EXPORT` | `PDF SCOUT` |
+
+The PDF mode is the one that's actually comparable to GitFut's "look up
+anyone" experience — LinkedIn has no public API for that, but "Save to PDF"
+is a real, always-available profile-page feature, not scraping. It just has
+much thinner signals, so it uses a **separate scoring formula** ([src/pdf/scoringPdf.ts](src/pdf/scoringPdf.ts))
+rather than forcing PDF data into the full-export formula.
+
+**Use this respectfully** — being able to view someone's public profile
+doesn't mean turning it into a stat card is something they'd expect or want.
+Prefer scouting your own profile, or get a person's OK before generating a
+card of theirs.
+
 ## Web app (no install required)
 
 **[jcmore2.github.io/linkedinfut](https://jcmore2.github.io/linkedinfut/)**
-— drop your export `.zip` in the browser and get your card instantly. It's a
-static page (built by GitHub Actions, hosted on GitHub Pages) that parses the
-zip entirely client-side with JavaScript — nothing is ever uploaded anywhere,
-not even to this project. Close the tab and the data is gone. Click
-"Download card.svg" to save the result and embed/commit it yourself.
+— pick a mode, drop a file, get your card instantly. It's a static page
+(built by GitHub Actions, hosted on GitHub Pages) that parses everything
+client-side with JavaScript — nothing is ever uploaded anywhere, not even to
+this project. Close the tab and the data is gone. Click "Download card.svg"
+to save the result and embed/commit it yourself.
 
 ## CLI (generates a card you commit to this repo)
 
-1. Export your own data from LinkedIn: **Settings & Privacy → Data Privacy →
-   Get a copy of your data**. Request at least: Profile, Positions, Skills,
-   Connections, Recommendations, Endorsements, Shares, Comments.
+**Full export:**
+
+1. **Settings & Privacy → Data Privacy → Get a copy of your data**. Request
+   at least: Profile, Positions, Skills, Connections, Recommendations,
+   Endorsements, Shares, Comments.
 2. Run the generator against the downloaded `.zip` — nothing is uploaded
    anywhere, it all runs on your machine:
 
@@ -45,6 +70,19 @@ not even to this project. Close the tab and the data is gone. Click
    npm install
    npm run generate -- --export ~/Downloads/Complete_LinkedInDataExport.zip --country US --out card.svg
    ```
+
+**Scout mode:**
+
+1. On any profile page → **"More" → "Save to PDF"**.
+2. Run the generator against the downloaded `.pdf`:
+
+   ```bash
+   npm install
+   npm run generate -- --pdf ~/Downloads/Profile.pdf --country US --out card.svg
+   ```
+
+Either way:
+
 3. Commit and push `card.svg` (and only that file — see **Privacy** below).
 4. Embed it anywhere:
 
@@ -64,6 +102,8 @@ npm run generate:sample  # writes sample/sample-card.svg
 
 ## Stat mapping
 
+**Full export** ([src/scoring.ts](src/scoring.ts)):
+
 | Stat | Scouted from |
 |:--:|:--|
 | **PAC** | Posts + comments in the last 12 months |
@@ -73,17 +113,36 @@ npm run generate:sample  # writes sample/sample-card.svg
 | **DEF** | Recommendations + endorsements given (helping others) |
 | **PHY** | Years of experience |
 
+**Scout / PDF** ([src/pdf/scoringPdf.ts](src/pdf/scoringPdf.ts)) — no social-proof data available, so different signals entirely:
+
+| Stat | Scouted from |
+|:--:|:--|
+| **PAC** | Number of roles held (career pace) |
+| **SHO** | Certifications earned |
+| **PAS** | Languages spoken |
+| **DRI** | Top skills listed (LinkedIn's PDF caps this at 3) |
+| **DEF** | Education entries |
+| **PHY** | Career span (years since earliest role) |
+
 Raw stats cap at 88, same "legacy gate" idea as GitFut — one good year
 shouldn't crown you an Icon. **These formulas are initial guesses, not
 calibrated against a real distribution of profiles** — expect numbers to feel
-off until they're tuned against more real exports.
+off until they're tuned against more real exports. The Scout formula is a
+rougher guess than the full-export one — its input ranges are much smaller
+(e.g. 0–5 certifications vs. 0–500 endorsements), so there's less intuition
+for what "normal" looks like.
+
+The PDF parser recognizes English and Spanish section headers only (LinkedIn
+renders "Save to PDF" in whatever language the *viewer's* UI is set to, not
+the profile owner's) — other languages degrade gracefully to a 0 for that
+section rather than crashing.
 
 ## Privacy
 
-Your LinkedIn export contains other people's data too (connections' names,
+A full data export contains other people's data too (connections' names,
 companies, who endorsed you). This repo's `.gitignore` blocks committing any
-`.zip` export or a `/private/` folder — only the generated card (which shows
-just your own aggregated stats) is meant to be committed and public.
+`.zip`/`.pdf` export or a `/private/` folder — only the generated card (which
+shows just aggregated stats) is meant to be committed and public.
 
 ## Limitations of the "just GitHub" approach
 

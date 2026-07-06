@@ -14,36 +14,64 @@
       </header>
 
       <section class="privacy-note">
-        <strong>Nothing is uploaded anywhere.</strong> Your export is parsed
-        entirely in this browser tab with JavaScript — it never touches a
-        server. Close the tab and it's gone.
+        <strong>Nothing is uploaded anywhere.</strong> Everything below is
+        parsed entirely in this browser tab with JavaScript — it never
+        touches a server. Close the tab and it's gone.
       </section>
 
-      <section class="steps">
-        <ol>
-          <li>
-            On LinkedIn: <strong>Settings &amp; Privacy → Data Privacy → Get a
-            copy of your data</strong>. Request at least Profile, Positions,
-            Skills, Connections, Recommendations, Endorsements, Shares, Comments.
-          </li>
-          <li>Download the <code>.zip</code> LinkedIn emails you.</li>
-          <li>Drop it below.</li>
-        </ol>
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="tab-full" role="tab" aria-selected="true">Full export (.zip)</button>
+        <button class="tab" id="tab-scout" role="tab" aria-selected="false">Scout a profile (PDF)</button>
+      </div>
+
+      <section id="panel-full">
+        <section class="steps">
+          <ol>
+            <li>
+              On LinkedIn: <strong>Settings &amp; Privacy → Data Privacy →
+              Get a copy of your data</strong>. Request at least Profile,
+              Positions, Skills, Connections, Recommendations, Endorsements,
+              Shares, Comments.
+            </li>
+            <li>Download the <code>.zip</code> LinkedIn emails you.</li>
+            <li>Drop it below. Richer stats (connections, endorsements, activity) — only works for your own account.</li>
+          </ol>
+        </section>
+
+        <section class="uploader">
+          <label for="zip-input" id="zip-drop-zone" class="drop-zone">
+            <span id="zip-drop-label">Drop your LinkedIn export .zip here, or click to choose a file</span>
+            <input id="zip-input" type="file" accept=".zip" />
+          </label>
+        </section>
       </section>
 
-      <section class="uploader">
-        <label for="file-input" id="drop-zone">
-          <span id="drop-label">Drop your LinkedIn export .zip here, or click to choose a file</span>
-          <input id="file-input" type="file" accept=".zip" />
-        </label>
+      <section id="panel-scout" hidden>
+        <section class="steps">
+          <ol>
+            <li>
+              Open <strong>any public LinkedIn profile</strong> you can view
+              (yours or someone else's) → click <strong>"More" → "Save to
+              PDF"</strong>.
+            </li>
+            <li>Drop the downloaded <code>.pdf</code> below. Thinner stats (no connections/endorsements/activity — only career history, skills, certs, languages, education) but works on anyone's public profile.</li>
+          </ol>
+        </section>
 
-        <div class="controls">
-          <label for="country-input">Country code (optional, e.g. US)</label>
-          <input id="country-input" type="text" maxlength="2" placeholder="US" />
-        </div>
-
-        <p id="status" role="status"></p>
+        <section class="uploader">
+          <label for="pdf-input" id="pdf-drop-zone" class="drop-zone">
+            <span id="pdf-drop-label">Drop a "Save to PDF" profile export here, or click to choose a file</span>
+            <input id="pdf-input" type="file" accept=".pdf" />
+          </label>
+        </section>
       </section>
+
+      <div class="controls">
+        <label for="country-input">Country code (optional, e.g. US)</label>
+        <input id="country-input" type="text" maxlength="2" placeholder="US" />
+      </div>
+
+      <p id="status" role="status"></p>
 
       <section id="result" hidden>
         <div id="card-container"></div>

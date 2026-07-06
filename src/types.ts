@@ -12,6 +12,22 @@ export interface ParsedProfile {
   recentActivityCount: number; // Shares.csv + Comments.csv rows in the last 12 months
 }
 
+// Signals extracted from a "Save to PDF" profile export — usable on ANY
+// public profile you can view, not just your own data export. Much thinner
+// on social-proof metrics (no connections/endorsements/recommendations/
+// activity), so it's scored with a separate, distinct formula rather than
+// forcing these into ParsedProfile's shape.
+export interface PdfProfile {
+  name: string;
+  headline: string;
+  positionYears: number; // career span, earliest role start to latest end/present
+  roleCount: number; // number of distinct positions listed
+  certCount: number;
+  languageCount: number;
+  topSkillCount: number; // LinkedIn's PDF only lists up to 3 — capped by design
+  educationCount: number;
+}
+
 export interface Stats {
   pac: number;
   sho: number;
@@ -22,6 +38,7 @@ export interface Stats {
 }
 
 export type Tier = "BRONZE" | "SILVER" | "GOLD" | "IN-FORM" | "TOTY" | "ICON";
+export type SourceMode = "FULL" | "SCOUT";
 
 export interface CardData {
   name: string;
@@ -32,4 +49,5 @@ export interface CardData {
   tier: Tier;
   position: string;
   archetype: string;
+  mode: SourceMode;
 }

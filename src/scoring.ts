@@ -1,13 +1,5 @@
+import { scale } from "./scaleCurve.js";
 import type { ParsedProfile, Stats, Tier } from "./types.js";
-
-// Diminishing-returns curve: 0 stays 0, and score approaches 99 as value
-// grows past `halfLife`. These half-life constants are initial guesses —
-// they haven't been calibrated against a real distribution of profiles yet,
-// so treat the resulting numbers as illustrative, not authoritative.
-function scale(value: number, halfLife: number): number {
-  const raw = 99 * (1 - Math.exp(-value / halfLife));
-  return Math.min(88, Math.round(raw)); // raw stats cap at 88, mirrors GitFut's "legacy gate"
-}
 
 export function computeStats(p: ParsedProfile): Stats {
   return {

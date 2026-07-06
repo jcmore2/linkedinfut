@@ -12,6 +12,7 @@
   <text x="30" y="94" font-size="16" font-weight="700" fill="#2A1A0C" opacity="0.85">CDM</text>
   <text x="300" y="40" font-size="12" font-weight="700" fill="#2A1A0C" opacity="0.7" text-anchor="end">US</text>
   <text x="300" y="58" font-size="11" font-weight="700" fill="#2A1A0C" opacity="0.7" text-anchor="end">BRONZE</text>
+  <text x="300" y="74" font-size="9" font-weight="700" fill="#2A1A0C" opacity="0.55" text-anchor="end">FULL EXPORT</text>
 
   <circle cx="170" cy="150" r="56" fill="#ffffff" fill-opacity="0.25" stroke="#2A1A0C" stroke-width="2" stroke-opacity="0.4" />
   <text x="170" y="163" font-size="40" font-weight="800" fill="#2A1A0C" text-anchor="middle">JS</text>

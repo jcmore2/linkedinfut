@@ -74,7 +74,35 @@ section {
   border-radius: 4px;
 }
 
-#drop-zone {
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab.active {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+#panel-full[hidden],
+#panel-scout[hidden] {
+  display: none;
+}
+
+.drop-zone {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,12 +116,12 @@ section {
   transition: border-color 0.15s ease;
 }
 
-#drop-zone.dragover {
+.drop-zone.dragover {
   border-color: var(--accent);
   color: var(--text);
 }
 
-#file-input {
+.drop-zone input {
   display: none;
 }
 
