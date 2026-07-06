@@ -1,8 +1,8 @@
-import { parseExportFile } from "./lib/parseExportBrowser.js";
 import { parseProfilePdfFile } from "./lib/parsePdfBrowser.js";
 import { loadFlagGraphic } from "./lib/flagSvgBrowser.js";
-import { computeStats, computeOverall, computeTier, computeArchetype } from "../src/scoring.js";
+import { computeOverall, computeTier, computeArchetype } from "../src/scoring.js";
 import { computeStatsFromPdfProfile } from "../src/pdf/scoringPdf.js";
+import { guessCountryCode } from "../src/country.js";
 import { renderCardStyled } from "../src/renderCardStyled.js";
 import { renderCardBack } from "./cardBack.js";
 import { initHeroShowcase } from "./heroShowcase.js";
@@ -13,16 +13,6 @@ initHeroShowcase(heroShowcase);
 
 const setupPanel = document.getElementById("setup-panel") as HTMLElement;
 
-const tabFull = document.getElementById("tab-full") as HTMLButtonElement;
-const tabScout = document.getElementById("tab-scout") as HTMLButtonElement;
-const panelFull = document.getElementById("panel-full") as HTMLElement;
-const panelScout = document.getElementById("panel-scout") as HTMLElement;
-
-const zipDropZone = document.getElementById("zip-drop-zone") as HTMLLabelElement;
-const zipDropLabel = document.getElementById("zip-drop-label") as HTMLSpanElement;
-const zipInput = document.getElementById("zip-input") as HTMLInputElement;
-const ZIP_DROP_DEFAULT = zipDropLabel.textContent ?? "";
-
 const pdfDropZone = document.getElementById("pdf-drop-zone") as HTMLLabelElement;
 const pdfDropLabel = document.getElementById("pdf-drop-label") as HTMLSpanElement;
 const pdfInput = document.getElementById("pdf-input") as HTMLInputElement;
@@ -31,7 +21,6 @@ const PDF_DROP_DEFAULT = pdfDropLabel.textContent ?? "";
 const styleFutBtn = document.getElementById("style-fut") as HTMLButtonElement;
 const styleTcgBtn = document.getElementById("style-tcg") as HTMLButtonElement;
 
-const countryInput = document.getElementById("country-input") as HTMLInputElement;
 const statusEl = document.getElementById("status") as HTMLParagraphElement;
 const resultEl = document.getElementById("result") as HTMLElement;
 const cardFlip = document.getElementById("card-flip") as HTMLDivElement;
@@ -49,21 +38,6 @@ function setStatus(message: string, isError = false) {
   statusEl.textContent = message;
   statusEl.classList.toggle("error", isError);
 }
-
-function switchTab(mode: "full" | "scout") {
-  const showFull = mode === "full";
-  tabFull.classList.toggle("active", showFull);
-  tabScout.classList.toggle("active", !showFull);
-  tabFull.setAttribute("aria-selected", String(showFull));
-  tabScout.setAttribute("aria-selected", String(!showFull));
-  panelFull.hidden = !showFull;
-  panelScout.hidden = showFull;
-  setStatus("");
-  resultEl.hidden = true;
-}
-
-tabFull.addEventListener("click", () => switchTab("full"));
-tabScout.addEventListener("click", () => switchTab("scout"));
 
 const SQUEEZE_MS = 160;
 
@@ -113,9 +87,7 @@ function resetToSetup() {
   resultEl.hidden = true;
   setupPanel.hidden = false;
   currentCardData = null;
-  zipInput.value = "";
   pdfInput.value = "";
-  zipDropLabel.textContent = ZIP_DROP_DEFAULT;
   pdfDropLabel.textContent = PDF_DROP_DEFAULT;
   setStatus("");
 }
@@ -140,43 +112,6 @@ cardFlip.addEventListener("keydown", (e) => {
   }
 });
 
-async function handleZipFile(file: File) {
-  if (!file.name.toLowerCase().endsWith(".zip")) {
-    setStatus("That doesn't look like a .zip file — export your data from LinkedIn first.", true);
-    return;
-  }
-  zipDropLabel.textContent = file.name;
-  setStatus("Parsing your export locally… nothing is being uploaded.");
-  resultEl.hidden = true;
-
-  try {
-    const profile = await parseExportFile(file);
-    const stats = computeStats(profile);
-    const overall = computeOverall(stats);
-    const tier = computeTier(overall);
-    const { position, archetype } = computeArchetype(stats);
-    const country = countryInput.value.trim().toUpperCase();
-    const flag = await loadFlagGraphic(country);
-
-    renderAndShow({
-      name: `${profile.firstName} ${profile.lastName}`.trim() || "Unknown",
-      headline: profile.headline,
-      company: profile.company,
-      country,
-      flag,
-      stats,
-      overall,
-      tier,
-      position,
-      archetype,
-      mode: "FULL",
-    });
-  } catch (err) {
-    console.error(err);
-    setStatus(`Couldn't parse that export: ${(err as Error).message}`, true);
-  }
-}
-
 async function handlePdfFile(file: File) {
   if (!file.name.toLowerCase().endsWith(".pdf")) {
     setStatus("That doesn't look like a .pdf file — use LinkedIn's \"Save to PDF\" option.", true);
@@ -192,7 +127,7 @@ async function handlePdfFile(file: File) {
     const overall = computeOverall(stats);
     const tier = computeTier(overall);
     const { position, archetype } = computeArchetype(stats);
-    const country = countryInput.value.trim().toUpperCase();
+    const country = guessCountryCode(profile.location) ?? "";
     const flag = await loadFlagGraphic(country);
 
     renderAndShow({
@@ -232,7 +167,6 @@ function wireDropZone(zone: HTMLLabelElement, input: HTMLInputElement, handler: 
   });
 }
 
-wireDropZone(zipDropZone, zipInput, handleZipFile);
 wireDropZone(pdfDropZone, pdfInput, handlePdfFile);
 
 downloadBtn.addEventListener("click", () => {

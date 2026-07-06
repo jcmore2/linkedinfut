@@ -12,6 +12,7 @@ const CERTIFICATIONS_HEADERS = ["certifications", "certificaciones"];
 const EXPERIENCE_HEADERS = ["experiencia", "experience"];
 const EDUCATION_HEADERS = ["educación", "educacion", "education"];
 const ALL_SIDEBAR_HEADERS = [...SKILLS_HEADERS, ...LANGUAGES_HEADERS, ...CERTIFICATIONS_HEADERS];
+const ALL_HEADERS = [...ALL_SIDEBAR_HEADERS, ...EXPERIENCE_HEADERS, ...EDUCATION_HEADERS];
 
 // A role/date line looks like "<start> - <end> (<duration>)", e.g.
 // "enero de 2025 - Present (1 año 7 meses)" or "Jun 2021 - Feb 2023 (1 yr 9 mos)".
@@ -44,7 +45,18 @@ function countSidebarSection(lines: PdfLine[], headers: string[], boundary: numb
 
 export function extractPdfProfile(lines: PdfLine[]): PdfProfile {
   if (lines.length === 0) {
-    return { name: "", headline: "", company: "", positionYears: 0, roleCount: 0, certCount: 0, languageCount: 0, topSkillCount: 0, educationCount: 0 };
+    return {
+      name: "",
+      headline: "",
+      company: "",
+      location: "",
+      positionYears: 0,
+      roleCount: 0,
+      certCount: 0,
+      languageCount: 0,
+      topSkillCount: 0,
+      educationCount: 0,
+    };
   }
 
   // The name is reliably the single largest-font run on the page — true
@@ -57,7 +69,13 @@ export function extractPdfProfile(lines: PdfLine[]): PdfProfile {
 
   const name = lines[nameIdx]?.text ?? "";
   const headlineCandidate = lines[nameIdx + 1]?.text ?? "";
-  const headline = ALL_SIDEBAR_HEADERS.includes(norm(headlineCandidate)) ? "" : headlineCandidate;
+  const headline = ALL_HEADERS.includes(norm(headlineCandidate)) ? "" : headlineCandidate;
+
+  // The location line (e.g. "Madrid y alrededores") sits right after the
+  // headline, before the "About"/"Extracto" section — same layout LinkedIn
+  // uses regardless of language.
+  const locationCandidate = headline ? (lines[nameIdx + 2]?.text ?? "") : "";
+  const location = ALL_HEADERS.includes(norm(locationCandidate)) ? "" : locationCandidate;
 
   const experienceStart = findHeaderIndex(lines, EXPERIENCE_HEADERS);
   const educationStart = findHeaderIndex(lines, EDUCATION_HEADERS);
@@ -96,6 +114,7 @@ export function extractPdfProfile(lines: PdfLine[]): PdfProfile {
     name,
     headline,
     company,
+    location,
     positionYears,
     roleCount,
     certCount,

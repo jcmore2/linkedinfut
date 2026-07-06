@@ -3,6 +3,7 @@ export interface ParsedProfile {
   lastName: string;
   headline: string;
   company: string; // most recent/current employer, from Positions.csv
+  location: string; // free-text "Geo Location" from Profile.csv, e.g. "San Francisco Bay Area"
   positionYears: number; // total years spanned across Positions.csv
   skillCount: number; // unique entries in Skills.csv
   connectionCount: number; // rows in Connections.csv
@@ -22,6 +23,7 @@ export interface PdfProfile {
   name: string;
   headline: string;
   company: string; // most recent/current employer, first entry in the Experience section
+  location: string; // free-text profile location line, e.g. "Madrid y alrededores"
   positionYears: number; // career span, earliest role start to latest end/present
   roleCount: number; // number of distinct positions listed
   certCount: number;
