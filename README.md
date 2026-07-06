@@ -1,13 +1,14 @@
-# linkedinfut
+# ScoutCard
 
-Turn your LinkedIn profile into a FIFA/FUT-style player card — an MVP exploring
+Turn your work history into a collectible stat card — an MVP exploring
 whether this can be done using **only GitHub as infrastructure** (no server,
 no database, no hosting bill).
 
 This is a companion experiment to [GitFut](https://github.com/Younesfdj/gitfut),
 which does the same thing for GitHub profiles. GitHub has a free public API
 GitFut can query live; LinkedIn does not expose one for arbitrary profiles, so
-this project works from **your own official data export** instead of scraping.
+this project works from **your own official data export**, or **any public
+profile's "Save to PDF" export**, instead of scraping.
 
 ## Why "just GitHub" infra
 
@@ -49,25 +50,27 @@ card of theirs.
 
 ## Web app (no install required)
 
-**[jcmore2.github.io/linkedinfut](https://jcmore2.github.io/linkedinfut/)**
+**[jcmore2.github.io/scoutcard](https://jcmore2.github.io/scoutcard/)**
 — pick a mode, drop a file, get your card instantly. It's a static page
 (built by GitHub Actions, hosted on GitHub Pages) that parses everything
 client-side with JavaScript — nothing is ever uploaded anywhere, not even to
-this project. Close the tab and the data is gone. Click "Download card.svg"
-to save the result and embed/commit it yourself.
+this project. Close the tab and the data is gone. Once a card is generated,
+the upload screen tucks itself away behind the result — hit **"Open a new
+pack"** to scout another profile. Click "Download card.svg" to save the
+result and embed/commit it yourself.
 
 Tap the card to flip it and see what each stat is measuring and what the
 tier bands mean. This is a web-app-only feature — the embeddable `card.svg`
 file (front side only) is a static image, so it can't be interactive inside
 a GitHub README `<img>`.
 
-There's also a **card style switcher**: the same scored data can render as
-the FIFA/FUT-style card described above, or as a trading-card-game-style
-layout ([src/renderCardTcg.ts](src/renderCardTcg.ts)) where each stat reads
-as an "attack" with its own effect text. Switching styles re-renders
-instantly from the already-computed data — no re-upload needed. This is an
-original layout inspired by the TCG format, not any officially licensed
-card set, and says so on the card itself.
+There's also a **card style switcher**: the same scored data can render as a
+FIFA/FUT-style shield card, or as a trading-card-game-style layout
+([src/renderCardTcg.ts](src/renderCardTcg.ts)) where each stat reads as an
+"attack" with its own effect text. Switching styles re-renders instantly
+from the already-computed data — no re-upload needed. Both are original
+layouts inspired by those card formats, not any officially licensed card
+set, and say so on the card itself.
 
 ## CLI (generates a card you commit to this repo)
 
@@ -95,7 +98,7 @@ card set, and says so on the card itself.
    ```
 
 Add `--style tcg` to either command for the trading-card-style layout instead
-of the default FIFA/FUT one.
+of the default FIFA/FUT shield.
 
 Either way:
 
@@ -103,7 +106,7 @@ Either way:
 4. Embed it anywhere:
 
    ```md
-   ![My LinkedInFut card](https://raw.githubusercontent.com/<you>/<repo>/main/card.svg)
+   ![My ScoutCard](https://raw.githubusercontent.com/<you>/<repo>/main/card.svg)
    ```
 
 ## Try it without your own data
@@ -166,7 +169,7 @@ shows just aggregated stats) is meant to be committed and public.
   works from a data export the profile owner uploads themselves, since
   LinkedIn has no public API for looking up other people's profiles.
 - The web app renders the card live per visit, but nothing is stored —
-  there's no shareable `linkedinfut.../jcmore2` URL. Persisting a card at a
+  there's no shareable `scoutcard.../jcmore2` URL. Persisting a card at a
   permanent URL still means downloading it and committing it yourself (the
   CLI path above), since there's no backend to save it for you.
 - Scoring constants are unvalidated placeholders (see above).

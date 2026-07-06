@@ -131,6 +131,6 @@ export function renderCardTcg(data: CardData): string {
   <circle cx="300" cy="${footerValueY - 3}" r="5" fill="none" stroke="${INK}" stroke-width="1.2" />
   <circle cx="312" cy="${footerValueY - 3}" r="5" fill="none" stroke="${INK}" stroke-width="1.2" />
 
-  <text x="170" y="${creditY}" font-size="7" fill="${MUTED_INK}" opacity="0.75" font-style="italic" text-anchor="middle">LinkedInFut fan card — not affiliated with Pokémon or LinkedIn</text>
+  <text x="170" y="${creditY}" font-size="7" fill="${MUTED_INK}" opacity="0.75" font-style="italic" text-anchor="middle">ScoutCard fan card — not affiliated with Pokémon or LinkedIn</text>
 </svg>`;
 }
