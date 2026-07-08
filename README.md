@@ -110,9 +110,9 @@ Neither the data export nor the "Save to PDF" export contains a photo
 either, so the web app lets you optionally drop one in after the card is
 generated — processed and embedded locally like everything else, never
 uploaded anywhere. It swaps out the initials-avatar placeholder wherever
-that appears (the FUT shield's circle, the TCG art panel, the baseball
-card's full photo panel) across all three styles and whichever style you
-switch to afterward. Skip it and the initials avatar stays.
+that appears (the FIFA/FUT style's arched photo window, the TCG art panel,
+the baseball card's full photo panel) across all three styles and whichever
+style you switch to afterward. Skip it and the initials avatar stays.
 
 The card back links to the profile's own `linkedin.com/in/...` URL when the
 PDF export includes one — a plain link rather than a QR code, to avoid a
@@ -198,6 +198,17 @@ off until they're tuned against more real exports. The Scout formula is a
 rougher guess than the full-export one — its input ranges are much smaller
 (e.g. 0–5 certifications vs. 0–500 endorsements), so there's less intuition
 for what "normal" looks like.
+
+### Tier presentation
+
+Bronze through Gold share one template per style, differing only by color —
+same as real rating cards. TOTY and Icon layer extra effects on top
+([src/tierEffects.ts](src/tierEffects.ts)) so those two actually look like a
+rarer class of card, not just a recolor: TOTY adds a diagonal holo-foil
+finish and a brighter border ring; Icon adds a glowing outer border, extra
+sparkle accents, and — on the FIFA/FUT style only — a laurel wreath framing
+the photo. Gold gets a couple of sparkle accents of its own as the one step
+up from the plain Bronze/Silver look.
 
 The PDF parser recognizes English, Spanish, French, German, and Portuguese
 section headers (LinkedIn renders "Save to PDF" in whatever language the
